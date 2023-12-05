@@ -4,7 +4,6 @@ import com.example.teamcity.api.enums.Role;
 import com.example.teamcity.api.generator.RandomData;
 import com.example.teamcity.api.generator.TestDataGenerator;
 import com.example.teamcity.api.models.NewProjectDescription;
-import com.example.teamcity.api.models.Project;
 import com.example.teamcity.api.requests.checked.ProjectChecked;
 import com.example.teamcity.api.requests.unchecked.ProjectUnchecked;
 import com.example.teamcity.api.spec.Specifications;
@@ -27,7 +26,6 @@ public class CreateProjectTest extends BaseApiTest {
                 .create(testDataSecond.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
-        ;
     }
 
     @Test
@@ -45,7 +43,6 @@ public class CreateProjectTest extends BaseApiTest {
                 .create(testDataSecond.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
-        ;
     }
 
     @Test
@@ -61,7 +58,6 @@ public class CreateProjectTest extends BaseApiTest {
                 .create(testData.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
-        ;
     }
 
     @Test
@@ -101,7 +97,6 @@ public class CreateProjectTest extends BaseApiTest {
 
         soft.assertThat(project.getId())
                 .isEqualTo(testData.getNewProjectDescription().getId());
-        ;
     }
 
     @Test
@@ -117,7 +112,6 @@ public class CreateProjectTest extends BaseApiTest {
                 .create(testData.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        ;
     }
 
 
@@ -134,7 +128,6 @@ public class CreateProjectTest extends BaseApiTest {
                 .create(testData.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        ;
     }
 
     @Test
@@ -150,7 +143,6 @@ public class CreateProjectTest extends BaseApiTest {
                 .create(testData.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        ;
     }
 
     @Test
@@ -166,7 +158,6 @@ public class CreateProjectTest extends BaseApiTest {
                 .create(testData.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
-        ;
     }
 
     @Test
@@ -183,7 +174,6 @@ public class CreateProjectTest extends BaseApiTest {
                 .create(testData.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        ;
     }
 
     @Test
@@ -198,7 +188,6 @@ public class CreateProjectTest extends BaseApiTest {
                 .create(testData.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_OK).extract().as(NewProjectDescription.class);
-        ;
 
         soft.assertThat(project.getId())
                 .isEqualTo(testData.getNewProjectDescription().getId());
@@ -216,7 +205,6 @@ public class CreateProjectTest extends BaseApiTest {
                 .create(testData.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_OK).extract().as(NewProjectDescription.class);
-        ;
 
         soft.assertThat(project.getName())
                 .isEqualTo(testData.getNewProjectDescription().getName());

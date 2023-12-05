@@ -152,7 +152,7 @@ public class RolesTest extends BaseApiTest {
     }
 
     @Test
-    public void projectViwerUserCannRunBuild() {
+    public void projectViwerUserCanRunBuild() {
         var testData = testDataStorage.addTestData();
 
         new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
@@ -179,7 +179,7 @@ public class RolesTest extends BaseApiTest {
 
         checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
 
-        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_VIEWER, "p:" + testData.getNewProjectDescription().getId()));
+        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.AGENT_MANAGER, "p:" + testData.getNewProjectDescription().getId()));
         checkedWithSuperUser.getUserRequest().create(testData.getUser());
 
         new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))

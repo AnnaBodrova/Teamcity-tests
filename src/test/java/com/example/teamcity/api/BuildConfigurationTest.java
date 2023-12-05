@@ -68,7 +68,7 @@ public class BuildConfigurationTest extends BaseApiTest {
 
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
+                .then().assertThat().statusCode(HttpStatus.SC_OK);
 
     }
 

@@ -1,6 +1,5 @@
 package com.example.teamcity.api.requests.checked;
 
-import com.example.teamcity.api.models.BuildType;
 import com.example.teamcity.api.requests.CrudInterface;
 import com.example.teamcity.api.requests.Request;
 import com.example.teamcity.api.requests.unchecked.UncheckedBuildConfig;
