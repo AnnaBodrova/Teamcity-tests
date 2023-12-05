@@ -7,6 +7,7 @@ import com.example.teamcity.api.requests.UncheckedRequests;
 import com.example.teamcity.api.requests.checked.CheckedBuildConfig;
 import com.example.teamcity.api.requests.checked.ProjectChecked;
 import com.example.teamcity.api.requests.unchecked.UncheckedBuildConfig;
+import com.example.teamcity.api.requests.unchecked.UncheckedBuildQueue;
 import com.example.teamcity.api.spec.Specifications;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
@@ -52,7 +53,7 @@ public class RolesTest extends BaseApiTest {
     }
 
     @Test
-    public void projectAdminUserCannotCreateBuildConfigToAnotherUserProjects() {// there is a bug
+    public void projectAdminUserCanCreateBuildConfigToAnotherUserProjects() {// there is a bug
         var firstTestData = testDataStorage.addTestData();
         var secondTestData = testDataStorage.addTestData();
 
@@ -71,8 +72,28 @@ public class RolesTest extends BaseApiTest {
 
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(secondTestData.getUser()))
                 .create(firstTestData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+                .then().assertThat().statusCode(HttpStatus.SC_OK);
 
+
+    }
+
+    @Test
+    public void projectAdminCanRunBuild() {
+        var testData = testDataStorage.addTestData();
+
+        new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
+
+        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+
+        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + testData.getNewProjectDescription().getId()));
+        checkedWithSuperUser.getUserRequest().create(testData.getUser());
+
+        checkedWithSuperUser.getBuildConfigRequest()
+                .create(testData.getBuildType());
+
+        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                .then()
+                .assertThat().statusCode(HttpStatus.SC_OK);
 
     }
 
@@ -94,6 +115,26 @@ public class RolesTest extends BaseApiTest {
     }
 
     @Test
+    public void projectDeveloperUserCanRunBuild() {
+        var testData = testDataStorage.addTestData();
+
+        new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
+
+        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+
+        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_DEVELOPER, "p:" + testData.getNewProjectDescription().getId()));
+        checkedWithSuperUser.getUserRequest().create(testData.getUser());
+
+        checkedWithSuperUser.getBuildConfigRequest()
+                .create(testData.getBuildType());
+
+        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                .then()
+                .assertThat().statusCode(HttpStatus.SC_OK);
+
+    }
+
+    @Test
     public void projectViwerUserCannotCreateBuildConfiguration() {
         var firstTestData = testDataStorage.addTestData();
 
@@ -111,19 +152,62 @@ public class RolesTest extends BaseApiTest {
     }
 
     @Test
+    public void projectViwerUserCannRunBuild() {
+        var testData = testDataStorage.addTestData();
+
+        new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
+
+        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+
+        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_VIEWER, "p:" + testData.getNewProjectDescription().getId()));
+        checkedWithSuperUser.getUserRequest().create(testData.getUser());
+
+        checkedWithSuperUser.getBuildConfigRequest()
+                .create(testData.getBuildType());
+
+        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                .then()
+                .assertThat().statusCode(HttpStatus.SC_OK);
+
+    }
+
+    @Test
     public void agentManagerUserCanCreateBuildConfiguration() {
-        var firstTestData = testDataStorage.addTestData();
+        var testData = testDataStorage.addTestData();
 
-        new CheckedRequests(Specifications.getSpec().authSpec(firstTestData.getUser()));
+        new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
 
-        checkedWithSuperUser.getProjectRequest().create(firstTestData.getNewProjectDescription());
+        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
 
-        firstTestData.getUser().setRoles(TestDataGenerator.generateRole(Role.AGENT_MANAGER, "p:" + firstTestData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getUserRequest().create(firstTestData.getUser());
+        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_VIEWER, "p:" + testData.getNewProjectDescription().getId()));
+        checkedWithSuperUser.getUserRequest().create(testData.getUser());
 
-        new UncheckedBuildConfig(Specifications.getSpec().authSpec(firstTestData.getUser()))
-                .create(firstTestData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_OK);
+        new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                .create(testData.getBuildType());
+
+        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                .then()
+                .assertThat().statusCode(HttpStatus.SC_OK);
+
+    }
+
+    @Test
+    public void agentManagerUserCanRunBuild() {
+        var testData = testDataStorage.addTestData();
+
+        new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
+
+        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+
+        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.AGENT_MANAGER, "p:" + testData.getNewProjectDescription().getId()));
+        checkedWithSuperUser.getUserRequest().create(testData.getUser());
+
+        new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                .create(testData.getBuildType());
+
+        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                .then()
+                .assertThat().statusCode(HttpStatus.SC_OK);
 
     }
 

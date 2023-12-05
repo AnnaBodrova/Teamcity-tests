@@ -74,11 +74,13 @@ public class CreateProjectTest extends BaseApiTest {
         testData.getUser().setRoles(TestDataGenerator.generateRole(Role.SYSTEM_ADMIN, "g"));
         checkedWithSuperUser.getUserRequest().create(testData.getUser());
 
-        new ProjectUnchecked(Specifications.getSpec().authSpec(testData.getUser()))
+        var project  = new ProjectUnchecked(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getNewProjectDescription())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_OK).extract().as(NewProjectDescription.class);
 
+        soft.assertThat(project.getId())
+                .isNotEmpty();
 
     }
 
@@ -92,10 +94,13 @@ public class CreateProjectTest extends BaseApiTest {
         testData.getUser().setRoles(TestDataGenerator.generateRole(Role.SYSTEM_ADMIN, "g"));
         checkedWithSuperUser.getUserRequest().create(testData.getUser());
 
-        new ProjectUnchecked(Specifications.getSpec().authSpec(testData.getUser()))
+        var project = new ProjectUnchecked(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getNewProjectDescription())
                 .then()
-                .assertThat().statusCode(HttpStatus.SC_OK);
+                .assertThat().statusCode(HttpStatus.SC_OK).extract().as(NewProjectDescription.class);
+
+        soft.assertThat(project.getId())
+                .isEqualTo(testData.getNewProjectDescription().getId());
         ;
     }
 
@@ -189,11 +194,14 @@ public class CreateProjectTest extends BaseApiTest {
         testData.getUser().setRoles(TestDataGenerator.generateRole(Role.SYSTEM_ADMIN, "g"));
         checkedWithSuperUser.getUserRequest().create(testData.getUser());
 
-        new ProjectUnchecked(Specifications.getSpec().authSpec(testData.getUser()))
+        var project = new ProjectUnchecked(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getNewProjectDescription())
                 .then()
-                .assertThat().statusCode(HttpStatus.SC_OK);
+                .assertThat().statusCode(HttpStatus.SC_OK).extract().as(NewProjectDescription.class);
         ;
+
+        soft.assertThat(project.getId())
+                .isEqualTo(testData.getNewProjectDescription().getId());
     }
 
     @Test
@@ -204,11 +212,14 @@ public class CreateProjectTest extends BaseApiTest {
         testData.getUser().setRoles(TestDataGenerator.generateRole(Role.SYSTEM_ADMIN, "g"));
         checkedWithSuperUser.getUserRequest().create(testData.getUser());
 
-        new ProjectUnchecked(Specifications.getSpec().authSpec(testData.getUser()))
+        var project = new ProjectUnchecked(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getNewProjectDescription())
                 .then()
-                .assertThat().statusCode(HttpStatus.SC_OK);
+                .assertThat().statusCode(HttpStatus.SC_OK).extract().as(NewProjectDescription.class);
         ;
+
+        soft.assertThat(project.getName())
+                .isEqualTo(testData.getNewProjectDescription().getName());
     }
 
 

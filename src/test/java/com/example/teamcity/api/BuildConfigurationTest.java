@@ -1,7 +1,6 @@
 package com.example.teamcity.api;
 
 import com.example.teamcity.api.generator.RandomData;
-import com.example.teamcity.api.generator.TestDataStorage;
 import com.example.teamcity.api.models.*;
 import com.example.teamcity.api.requests.checked.CheckedBuildConfig;
 import com.example.teamcity.api.requests.checked.ProjectChecked;
@@ -11,7 +10,6 @@ import com.example.teamcity.api.spec.Specifications;
 import org.apache.http.HttpStatus;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 
 public class BuildConfigurationTest extends BaseApiTest {
 
@@ -275,6 +273,22 @@ public class BuildConfigurationTest extends BaseApiTest {
 
         soft.assertThat(buildtype.getSteps().getStep().get(0).getType())
                 .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getType());
+
+
+    }
+
+    @Test
+    public void buildConfigurationCannotBeCreatedForUnknownProjectId() {
+        var testData = testDataStorage.addTestData();
+        new UserChecked(Specifications.getSpec().superUserSpec()).create(testData.getUser());
+
+        new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
+
+        testData.getBuildType().getProject().setId(RandomData.getString());
+
+        new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                .create(testData.getBuildType())
+                .then().assertThat().statusCode(HttpStatus.SC_NOT_FOUND);
 
 
     }
