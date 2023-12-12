@@ -28,7 +28,6 @@ public class BuildConfigurationTest extends BaseApiTest {
         soft.assertThat(buildConfig.getProject().getId()).isEqualTo(testData.getBuildType().getProject().getId());
         soft.assertThat(buildConfig.getParameters()).isEqualTo(testData.getBuildType().getParameters());
         soft.assertThat(buildConfig.getSteps()).isEqualTo(testData.getBuildType().getSteps());
-
     }
 
     @Test
