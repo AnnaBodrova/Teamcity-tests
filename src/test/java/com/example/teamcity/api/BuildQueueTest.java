@@ -21,10 +21,7 @@ public class BuildQueueTest extends BaseApiTest {
 
         new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
                 .then()
-                .assertThat().statusCode(HttpStatus.SC_OK)
-        ;
-
-
+                .assertThat().statusCode(HttpStatus.SC_OK);
     }
 
     @Test
@@ -38,8 +35,7 @@ public class BuildQueueTest extends BaseApiTest {
 
         new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
                 .then()
-                .assertThat().statusCode(HttpStatus.SC_BAD_REQUEST)
-        ;
+                .assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -53,8 +49,7 @@ public class BuildQueueTest extends BaseApiTest {
 
         new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
                 .then()
-                .assertThat().statusCode(HttpStatus.SC_NOT_FOUND)
-        ;
+                .assertThat().statusCode(HttpStatus.SC_NOT_FOUND);
     }
 
     @Test
@@ -67,9 +62,6 @@ public class BuildQueueTest extends BaseApiTest {
 
         new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
                 .then()
-                .assertThat().statusCode(HttpStatus.SC_NOT_FOUND)
-        ;
-
-
+                .assertThat().statusCode(HttpStatus.SC_NOT_FOUND);
     }
 }
