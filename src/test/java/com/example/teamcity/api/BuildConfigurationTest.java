@@ -22,22 +22,13 @@ public class BuildConfigurationTest extends BaseApiTest {
 
         var buildConfig = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType());
-        soft.assertThat(buildConfig.getId()).isEqualTo(testData.getBuildType().getId());
+
         soft.assertThat(buildConfig.getId()).isEqualTo(testData.getBuildType().getId());
         soft.assertThat(buildConfig.getName()).isEqualTo(testData.getBuildType().getName());
         soft.assertThat(buildConfig.getProject().getId()).isEqualTo(testData.getBuildType().getProject().getId());
-        soft.assertThat(buildConfig.getSteps().getStep().get(0).getName())
-                .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getName());
-        soft.assertThat(buildConfig.getSteps().getStep().get(0).getType())
-                .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getType());
-        soft.assertThat(buildConfig.getSteps().getStep().get(0).getProperties().getProperty().get(0).getName())
-                .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getProperties().getProperty().get(0).getName());
-        soft.assertThat(buildConfig.getSteps().getStep().get(0).getProperties().getProperty().get(0).getValue())
-                .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getProperties().getProperty().get(0).getValue());
-        soft.assertThat(buildConfig.getParameters().getProperty().get(0).getName())
-                .isEqualTo(testData.getBuildType().getParameters().getProperty().get(0).getName());
-        soft.assertThat(buildConfig.getParameters().getProperty().get(0).getValue())
-                .isEqualTo(testData.getBuildType().getParameters().getProperty().get(0).getValue());
+        soft.assertThat(buildConfig.getParameters()).isEqualTo(testData.getBuildType().getParameters());
+        soft.assertThat(buildConfig.getSteps()).isEqualTo(testData.getBuildType().getSteps());
+
     }
 
     @Test
