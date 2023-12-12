@@ -18,5 +18,4 @@ public class BaseTest {
     public void afterTest() {
         soft.assertAll();
     }
-
 }
