@@ -208,6 +208,4 @@ public class CreateProjectTest extends BaseApiTest {
         soft.assertThat(project.getName())
                 .isEqualTo(testData.getNewProjectDescription().getName());
     }
-
-
 }
