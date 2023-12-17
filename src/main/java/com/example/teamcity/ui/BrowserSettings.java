@@ -11,7 +11,7 @@ public class BrowserSettings {
     public static void setup(String browser) {
         Configuration.browser = browser;
         switch (browser) {
-            case "firefifox":
+            case "firefox":
                 setFirefoxOptions();
                 break;
             case "chrome":
