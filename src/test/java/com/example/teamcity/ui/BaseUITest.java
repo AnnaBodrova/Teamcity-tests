@@ -16,15 +16,12 @@ import java.util.Map;
 public class BaseUITest extends BaseTest {
     @BeforeSuite
     public void setupUITest() {
-
         Configuration.baseUrl = "http://" + Config.getProperty("host");
         Configuration.remote = Config.getProperty("remote");
         Configuration.reportsFolder = "target/surefare-reports";
         Configuration.downloadsFolder = "target/downloads";
 
         BrowserSettings.setup(Config.getProperty("browser"));
-
-
     }
 
     public void loginAsUser(User user) {

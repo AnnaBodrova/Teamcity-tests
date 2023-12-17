@@ -22,9 +22,10 @@ public class BaseTest {
         soft = new SoftAssertions();
         testDataStorage = TestDataStorage.getTestDataStorage();
     }
-@AfterMethod
-    public void afterTest(){
-    soft.assertAll();
+
+    @AfterMethod
+    public void afterTest() {
+        soft.assertAll();
     }
 
 }

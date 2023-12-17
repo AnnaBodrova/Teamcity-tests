@@ -22,11 +22,8 @@ public class ProjectsPage extends FavoritePage {
         waitUntilFavouritePageIsLoaded();
         return this;
     }
-
     public List<ProjectElement> getSubprojects() {
         subprojects.get(0).shouldBe(Condition.visible, Duration.ofSeconds(10));
         return generatePageElements(subprojects, ProjectElement::new);
     }
-
-
 }
