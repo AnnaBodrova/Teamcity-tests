@@ -16,20 +16,16 @@ public class BaseTest {
     public UncheckedRequests uncheckedWithSuperUser = new UncheckedRequests(Specifications.getSpec().superUserSpec());
 
 
-
-
-
-@BeforeMethod
-    public void beforeTest(){
-
+    @BeforeMethod
+    public void beforeTest() {
         soft = new SoftAssertions();
-    testDataStorage = TestDataStorage.getTestDataStorage();
+        testDataStorage = TestDataStorage.getTestDataStorage();
     }
-@AfterMethod
-    public void afterTest(){
 
+    @AfterMethod
+    public void afterTest() {
         soft.assertAll();
-    testDataStorage.delete();
+        testDataStorage.delete();
     }
 
 }
