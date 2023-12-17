@@ -36,7 +36,6 @@ public class RolesTest extends BaseApiTest {
 
         var project = new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
         soft.assertThat(project.getId()).isEqualTo(testData.getNewProjectDescription().getId());
-
     }
 
     @Test
@@ -49,7 +48,6 @@ public class RolesTest extends BaseApiTest {
         var buildConfig = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType());
         soft.assertThat(buildConfig.getId()).isEqualTo(testData.getBuildType().getId());
-
     }
 
     @Test
@@ -66,15 +64,12 @@ public class RolesTest extends BaseApiTest {
         firstTestData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + firstTestData.getNewProjectDescription().getId()));
         checkedWithSuperUser.getUserRequest().create(firstTestData.getUser());
 
-
         secondTestData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + secondTestData.getNewProjectDescription().getId()));
         checkedWithSuperUser.getUserRequest().create(secondTestData.getUser());
 
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(secondTestData.getUser()))
                 .create(firstTestData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_OK);
-
-
     }
 
     @Test
@@ -94,7 +89,6 @@ public class RolesTest extends BaseApiTest {
         new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_OK);
-
     }
 
     @Test
@@ -111,7 +105,6 @@ public class RolesTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(firstTestData.getUser()))
                 .create(firstTestData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN);
-
     }
 
     @Test
@@ -131,7 +124,6 @@ public class RolesTest extends BaseApiTest {
         new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_OK);
-
     }
 
     @Test
@@ -148,7 +140,6 @@ public class RolesTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(firstTestData.getUser()))
                 .create(firstTestData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN);
-
     }
 
     @Test
@@ -168,7 +159,6 @@ public class RolesTest extends BaseApiTest {
         new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_OK);
-
     }
 
     @Test
@@ -188,7 +178,6 @@ public class RolesTest extends BaseApiTest {
         new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_OK);
-
     }
 
     @Test
@@ -208,7 +197,5 @@ public class RolesTest extends BaseApiTest {
         new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_OK);
-
     }
-
 }

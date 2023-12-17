@@ -77,7 +77,6 @@ public class CreateProjectTest extends BaseApiTest {
 
         soft.assertThat(project.getId())
                 .isNotEmpty();
-
     }
 
     @Test
@@ -196,7 +195,7 @@ public class CreateProjectTest extends BaseApiTest {
     @Test
     public void projectNameContainsAllAsciiSymbols() {
         var testData = testDataStorage.addTestData();
-        testData.getNewProjectDescription().setName(" !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+        testData.getNewProjectDescription().setName(allAsciiSymbols);
 
         testData.getUser().setRoles(TestDataGenerator.generateRole(Role.SYSTEM_ADMIN, "g"));
         checkedWithSuperUser.getUserRequest().create(testData.getUser());
@@ -209,6 +208,4 @@ public class CreateProjectTest extends BaseApiTest {
         soft.assertThat(project.getName())
                 .isEqualTo(testData.getNewProjectDescription().getName());
     }
-
-
 }

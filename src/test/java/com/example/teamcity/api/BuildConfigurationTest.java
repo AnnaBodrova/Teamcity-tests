@@ -1,7 +1,6 @@
 package com.example.teamcity.api;
 
 import com.example.teamcity.api.generator.RandomData;
-import com.example.teamcity.api.models.*;
 import com.example.teamcity.api.requests.checked.CheckedBuildConfig;
 import com.example.teamcity.api.requests.checked.ProjectChecked;
 import com.example.teamcity.api.requests.checked.UserChecked;
@@ -21,25 +20,14 @@ public class BuildConfigurationTest extends BaseApiTest {
         var project = new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
         soft.assertThat(project.getId()).isEqualTo(testData.getNewProjectDescription().getId());
 
-
         var buildConfig = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType());
-        soft.assertThat(buildConfig.getId()).isEqualTo(testData.getBuildType().getId());
+
         soft.assertThat(buildConfig.getId()).isEqualTo(testData.getBuildType().getId());
         soft.assertThat(buildConfig.getName()).isEqualTo(testData.getBuildType().getName());
         soft.assertThat(buildConfig.getProject().getId()).isEqualTo(testData.getBuildType().getProject().getId());
-        soft.assertThat(buildConfig.getSteps().getStep().get(0).getName())
-                .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getName());
-        soft.assertThat(buildConfig.getSteps().getStep().get(0).getType())
-                .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getType());
-        soft.assertThat(buildConfig.getSteps().getStep().get(0).getProperties().getProperty().get(0).getName())
-                .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getProperties().getProperty().get(0).getName());
-        soft.assertThat(buildConfig.getSteps().getStep().get(0).getProperties().getProperty().get(0).getValue())
-                .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getProperties().getProperty().get(0).getValue());
-        soft.assertThat(buildConfig.getParameters().getProperty().get(0).getName())
-                .isEqualTo(testData.getBuildType().getParameters().getProperty().get(0).getName());
-        soft.assertThat(buildConfig.getParameters().getProperty().get(0).getValue())
-                .isEqualTo(testData.getBuildType().getParameters().getProperty().get(0).getValue());
+        soft.assertThat(buildConfig.getParameters()).isEqualTo(testData.getBuildType().getParameters());
+        soft.assertThat(buildConfig.getSteps()).isEqualTo(testData.getBuildType().getSteps());
     }
 
     @Test
@@ -49,13 +37,11 @@ public class BuildConfigurationTest extends BaseApiTest {
 
         new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
 
-
         testData.getBuildType().setName(null);
 
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
-
     }
 
     @Test
@@ -66,10 +52,8 @@ public class BuildConfigurationTest extends BaseApiTest {
 
         testData.getBuildType().setId(RandomData.getStringOfLength(255));
 
-        new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
-                .create(testData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_OK);
-
+        new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                .create(testData.getBuildType());
     }
 
     @Test
@@ -84,7 +68,6 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-
     }
 
     @Test
@@ -97,12 +80,10 @@ public class BuildConfigurationTest extends BaseApiTest {
         testData.getBuildType().setId("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
 
 
-        var buildType = new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
-                .create(testData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_OK).extract().as(BuildType.class);
+        var buildType = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                .create(testData.getBuildType());
 
         soft.assertThat(buildType.getId()).isEqualTo(testData.getBuildType().getId());
-
     }
 
     @Test
@@ -118,8 +99,6 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-
-
     }
 
     @Test
@@ -130,14 +109,12 @@ public class BuildConfigurationTest extends BaseApiTest {
         new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
 
 
-        testData.getBuildType().setName(" !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+        testData.getBuildType().setName(allAsciiSymbols);
 
-        var buildType = new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
-                .create(testData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_OK).extract().as(BuildType.class);
+        var buildType = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                .create(testData.getBuildType());
 
         soft.assertThat(buildType.getName()).isEqualTo(testData.getBuildType().getName());
-
     }
 
     @Test
@@ -153,8 +130,6 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-
-
     }
 
     @Test
@@ -170,7 +145,6 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-
     }
 
     @Test
@@ -186,7 +160,6 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
-
     }
 
     @Test
@@ -202,7 +175,6 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
-
     }
 
     @Test
@@ -212,15 +184,13 @@ public class BuildConfigurationTest extends BaseApiTest {
 
         new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
 
-        testData.getBuildType().getParameters().getProperty().get(0).setName(" !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+        testData.getBuildType().getParameters().getProperty().get(0).setName(allAsciiSymbols);
 
-        var buildtype = new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
-                .create(testData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_OK).extract().as(BuildType.class);
+        var buildtype = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                .create(testData.getBuildType());
 
         soft.assertThat(buildtype.getParameters().getProperty().get(0).getName())
                 .isEqualTo(testData.getBuildType().getParameters().getProperty().get(0).getName());
-
     }
 
     @Test
@@ -230,15 +200,13 @@ public class BuildConfigurationTest extends BaseApiTest {
 
         new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
 
-        testData.getBuildType().getParameters().getProperty().get(0).setValue(" !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+        testData.getBuildType().getParameters().getProperty().get(0).setValue(allAsciiSymbols);
 
-        var buildtype = new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
-                .create(testData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_OK).extract().as(BuildType.class);
+        var buildtype = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                .create(testData.getBuildType());
 
         soft.assertThat(buildtype.getParameters().getProperty().get(0).getValue())
                 .isEqualTo(testData.getBuildType().getParameters().getProperty().get(0).getValue());
-
     }
 
     @Test
@@ -248,11 +216,10 @@ public class BuildConfigurationTest extends BaseApiTest {
 
         new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
 
-        testData.getBuildType().getSteps().getStep().get(0).setName(" !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+        testData.getBuildType().getSteps().getStep().get(0).setName(allAsciiSymbols);
 
-        var buildtype = new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
-                .create(testData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_OK).extract().as(BuildType.class);
+        var buildtype = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                .create(testData.getBuildType());
 
         soft.assertThat(buildtype.getSteps().getStep().get(0).getName())
                 .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getName());
@@ -265,16 +232,13 @@ public class BuildConfigurationTest extends BaseApiTest {
 
         new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
 
-        testData.getBuildType().getSteps().getStep().get(0).setType(" !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+        testData.getBuildType().getSteps().getStep().get(0).setType(allAsciiSymbols);
 
-        var buildtype = new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
-                .create(testData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_OK).extract().as(BuildType.class);
+        var buildtype = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                .create(testData.getBuildType());
 
         soft.assertThat(buildtype.getSteps().getStep().get(0).getType())
                 .isEqualTo(testData.getBuildType().getSteps().getStep().get(0).getType());
-
-
     }
 
     @Test
@@ -289,8 +253,5 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_NOT_FOUND);
-
-
     }
-
 }
