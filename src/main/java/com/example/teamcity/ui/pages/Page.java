@@ -37,7 +37,6 @@ public abstract class Page {
                     elements.add(creator.apply(webElement));
                 }
         );
-        System.out.println(elements.size());
         return elements;
     }
 }
