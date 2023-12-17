@@ -7,13 +7,15 @@ import org.testng.annotations.BeforeMethod;
 public class BaseTest {
     protected SoftAssertions soft;
 
-@BeforeMethod
-    public void beforeTest(){
-soft = new SoftAssertions();
-    }
-@AfterMethod
-    public void afterTest(){
-    soft.assertAll();
+    public static final String allAsciiSymbols = " !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+
+    @BeforeMethod
+    public void beforeTest() {
+        soft = new SoftAssertions();
     }
 
+    @AfterMethod
+    public void afterTest() {
+        soft.assertAll();
+    }
 }

@@ -50,9 +50,13 @@ public class TestDataGenerator {
                                                                 .build()))
                                                 .build()).build())).build()).build();
 
+        var build = Build.builder()
+                .buildType(BuildType.builder().id(buildType.getId()).build()).build();
+
         return TestData.builder()
                 .user(user)
                 .buildType(buildType)
+                .build(build)
                 .newProjectDescription(projectDescription).build();
 
     }

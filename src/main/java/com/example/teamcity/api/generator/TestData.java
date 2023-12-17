@@ -1,5 +1,6 @@
 package com.example.teamcity.api.generator;
 
+import com.example.teamcity.api.models.Build;
 import com.example.teamcity.api.models.BuildType;
 import com.example.teamcity.api.models.NewProjectDescription;
 import com.example.teamcity.api.models.User;
@@ -15,6 +16,7 @@ public class TestData {
     private User user;
     private NewProjectDescription newProjectDescription;
     private BuildType buildType;
+    private Build build;
 
     public void delete(){
         var spec = Specifications.getSpec().authSpec(user);
