@@ -1,6 +1,7 @@
 package com.example.teamcity.ui;
 
 import com.codeborne.selenide.selector.ByAttribute;
+import com.codeborne.selenide.selector.ByText;
 
 public class Selectors {
     public static ByAttribute byId(String value){
@@ -18,5 +19,8 @@ public class Selectors {
     }
     public static ByAttribute byTitle(String value){
         return new ByAttribute("title", value);
+    }
+    public static ByText byHeader(String value){
+        return new ByText(value);
     }
 }
