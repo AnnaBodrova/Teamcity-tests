@@ -30,13 +30,12 @@ jobs:
         run: docker pull selenoid/chrome:121.0
 
       - name: Run Selenoid
-        run: | 
-          docker run -d                                   \
-          --name selenoid                                 \
-          -p 4444:4444                                    \
-          -v /var/run/docker.sock:/var/run/docker.sock    \
-          -v /your/directory/config/:/etc/selenoid/:ro              \
-          aerokube/selenoid:latest-release
+        run: |
+          docker run -d --name selenoid \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v $(pwd)/config/:/etc/selenoid/:ro \
+          -p 4444:4444 \
+          aerokube/selenoid
 
       - name: Run Selenoid UI
         run: |
