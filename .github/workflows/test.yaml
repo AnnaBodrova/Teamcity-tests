@@ -52,9 +52,7 @@ jobs:
           -v $(pwd)/tmp/teamcity_server/logs:/opt/teamcity/logs \
           -p 8111:8111 \
           jetbrains/teamcity-server:2023.11.1
-          
-      - name: PWERE
-        run: cd .. && ls
+       
 
       - name: Set up Teamcity Server
         run: ./mvnw clean test -Dtest="SetupTest#setupTeamcityTest"
