@@ -70,6 +70,9 @@ jobs:
             -v $(pwd)/tmp/teamcity_agent/conf:/data/teamcity_agent/conf \
             jetbrains/teamcity-agent:2023.11.1 
 
+      - name: Run tests
+        run: ./mvnw test
+
 
 
 
