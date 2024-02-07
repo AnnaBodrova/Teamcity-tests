@@ -36,9 +36,6 @@ jobs:
       - name: Prepare Selenoid config
         run: mkdir selenoid && cd selenoid && mkdir config && cp /home/runner/work/Teamcity-tests/Teamcity-tests/infra/browsers.json config/ 
 
-      - name: TESTTSTSTST
-        run: echo $(pwd) && cd selenoid && ls
-
       - name: Run Selenoid
         run: |
           cd selenoid && ls && docker run -d --name selenoid \
