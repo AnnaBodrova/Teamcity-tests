@@ -37,11 +37,11 @@ jobs:
         run: mkdir selenoid && cd selenoid && mkdir config && cp /home/runner/work/Teamcity-tests/Teamcity-tests/infra/browsers.json config/ 
 
       - name: TESTTSTSTST
-        run: echo $(pwd) && ls
+        run: echo $(pwd) && cd selenoid && ls
 
       - name: Run Selenoid
         run: |
-          cd selenoid && docker run --name selenoid \
+          cd selenoid && ls && docker run --name selenoid \
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v $(pwd)/config/:/etc/selenoid/:ro \
           -p 4444:4444 \
