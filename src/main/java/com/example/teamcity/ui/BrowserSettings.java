@@ -22,7 +22,7 @@ public class BrowserSettings {
 
     private static Map<String, Boolean> getSelenoidOptions() {
         Map<String, Boolean> options = new HashMap<>();
-        options.put("enableVNC", true);
+        options.put("enableVNC", false);
         options.put("enableLog", true);
         return options;
     }
