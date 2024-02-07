@@ -53,8 +53,11 @@ jobs:
           -p 8111:8111 \
           jetbrains/teamcity-server:2023.11.1
           
+      - name: PWERE
+        run: cd .. && ls
+
       - name: Set up Teamcity Server
-        run: cd .. && mvn clean test -Dtest="SetupTest#setupTeamcityTest"
+        run: mvn clean test -Dtest="SetupTest#setupTeamcityTest"
 
       - name: Set up superUserToken environment variable
         run: echo "SUPER_USER_TOKEN=$(docker logs teamcity-server | grep 'Super user authentication token' | tail -n 1 | awk '{print $6}')" >> $GITHUB_ENV
