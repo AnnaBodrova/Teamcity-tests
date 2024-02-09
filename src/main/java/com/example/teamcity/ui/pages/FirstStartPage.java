@@ -9,7 +9,7 @@ import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.element;
 
-public class FirstStartPage extends Page{
+public class FirstStartPage extends Page {
     private static final String START_PAGE_URL = "/";
     private SelenideElement proceedButton = element(Selectors.byId("proceedButton"));
     private SelenideElement connectionSetupHeader = element(Selectors.byHeader("Database connection setup"));
@@ -17,19 +17,20 @@ public class FirstStartPage extends Page{
     private SelenideElement licenseAgreementHeader = element(Selectors.byHeader("License Agreement for JetBrains"));
     private SelenideElement licenseAcceptCheckbox = element(Selectors.byId("accept"));
     private SelenideElement continueButton = element(Selectors.byType("submit"));
-    private SelenideElement createAdministratorAccountHeader = element(Selectors.byHeader("Create Administrator Account"));
+    private SelenideElement createAdministratorAccountHeader = element(Selectors.byId("header"));
 
     public FirstStartPage open() {
         Selenide.open(START_PAGE_URL);
         return this;
 
     }
+
     public FirstStartPage proceed() {
         proceedButton.click();
         return this;
     }
 
-    public FirstStartPage waitInitializing(){
+    public FirstStartPage waitInitializing() {
         connectionSetupHeader.shouldBe(Condition.visible, Duration.ofSeconds(30));
         return this;
     }
@@ -39,25 +40,38 @@ public class FirstStartPage extends Page{
         return this;
     }
 
-    public FirstStartPage waitTeamcityStarted(){
+    public FirstStartPage waitTeamcityStarted() {
         teamcityStartingHeader.shouldBe(Condition.visible, Duration.ofSeconds(10));
         return this;
     }
 
-    public FirstStartPage waitLisenceHeader() throws InterruptedException {
+    public FirstStartPage waitLisenceHeader() {
         licenseAgreementHeader.shouldBe(Condition.visible, Duration.ofSeconds(60));
         return this;
     }
 
-    public FirstStartPage setAgreementTrue(){
+    public FirstStartPage setAgreementTrue() {
         licenseAcceptCheckbox.click();
         return this;
     }
 
-    public FirstStartPage clickContinue(){
+    public FirstStartPage clickContinue() {
         continueButton.click();
         return this;
     }
 
+    public SelenideElement getHeader() {
+        return createAdministratorAccountHeader.shouldBe(Condition.visible, Duration.ofSeconds(10));
+    }
+
+    public SelenideElement setupTeamcity() {
+        return proceed()
+                .waitInitializing()
+                .proceedDataBaseConnection()
+                .waitTeamcityStarted()
+                .waitLisenceHeader()
+                .setAgreementTrue()
+                .clickContinue().getHeader();
+    }
 
 }
