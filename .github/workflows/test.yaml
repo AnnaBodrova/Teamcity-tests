@@ -78,9 +78,6 @@ jobs:
       - name: Run api tests
         run: ./mvnw test -DsuiteXmlFile=teamcity-suites/api-suite.xml
 
-      - name: Run tests
-        run: ./mvnw test
-
 
 
 
