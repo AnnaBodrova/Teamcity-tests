@@ -25,10 +25,6 @@ jobs:
 
       - name: Setup host config property
         run: printf "\nhost=$HOST:8111\nbrowser=firefox\nremote=http://$HOST:4444/wd/hub" > src/main/resources/config.properties
-        
-      - name: Store working directory
-        run: |
-          echo "WRKDR=$(pwd)" >> $GITHUB_ENV
           
       - name: Pull Selenoid Chrome
         run: docker pull selenoid/firefox:121.0
