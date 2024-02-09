@@ -36,9 +36,6 @@ jobs:
       - name: Prepare Selenoid config
         run: mkdir selenoid && cd selenoid && mkdir config && cp /home/runner/work/Teamcity-tests/Teamcity-tests/infra/browsers.json config/ 
 
-      - name: TESTTSTSTST
-        run: echo $(pwd) && cd selenoid && ls
-
       - name: Run Selenoid
         run: |
           cd selenoid && ls && docker run -d --name selenoid \
@@ -65,7 +62,10 @@ jobs:
         run: echo "SUPER_USER_TOKEN=$(docker logs teamcity-server | grep 'Super user authentication token' | tail -n 1 | awk '{print $6}')" >> $GITHUB_ENV
 
       - name: Set up superUserToken to config.properties
-        run: echo "superUserToken=$SUPER_USER_TOKEN" >> src/main/resources/config.properties
+        run: printf "\nhost=$HOST:8111\nbrowser=firefox\nremote=http://$HOST:4444/wd/hub\nsuperUserToken=$SUPER_USER_TOKEN" > src/main/resources/config.properties
+
+      - name: Show superUserToken to config.properties
+        run:  echo $SUPER_USER_TOKEN && cat src/main/resources/config.properties
 
       - name: Run TeamCity Agent
         run: |
@@ -77,6 +77,9 @@ jobs:
 
       - name: Run api tests
         run: ./mvnw test -DsuiteXmlFile=teamcity-suites/api-suite.xml
+
+      - name: Run tests
+        run: ./mvnw test
 
 
 
