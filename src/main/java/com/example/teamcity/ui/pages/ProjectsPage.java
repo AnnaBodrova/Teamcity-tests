@@ -23,7 +23,7 @@ public class ProjectsPage extends FavoritePage {
         return this;
     }
     public List<ProjectElement> getSubprojects() {
-        subprojects.get(0).shouldBe(Condition.visible, Duration.ofSeconds(10));
+        subprojects.get(0).shouldBe(Condition.visible, Duration.ofSeconds(30));
         return generatePageElements(subprojects, ProjectElement::new);
     }
 }
