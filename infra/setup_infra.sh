@@ -43,6 +43,16 @@ jetbrains/teamcity-server
 echo "Teamcity Server is running...."
 
 #########################################
+
+echo "Start teamcity agent"
+cd .. && cd $teamcity_agent_workdir
+
+docker run -d -e SERVER_URL="http://$ip:8111"  \
+    -v $(pwd)/conf:/data/teamcity_agent/conf  \
+    jetbrains/teamcity-agent
+
+echo "Teamcity agent is started...."
+#########################################
 echo "Start selenoid"
 
 cd .. && cd $selenoid_workdir
@@ -81,10 +91,15 @@ superuser_token=$(grep -o 'Super user authentication token: [0-9]*' $teamcity_te
 echo "Super user token: $superuser_token"
 
 #########################################
-echo "Run system tests"
+echo "Authorize teamcity agent"
 
 printf "host=$ip:8111\nsuperUserToken=$superuser_token\nremote=http://$ip:4444/wd/hub\nbrowser=firefox" > $teamcity_tests_directory/src/main/resources/config.properties
 
 cat $teamcity_tests_directory/src/main/resources/config.properties
 
-mvn test
+mvn test -Dtest="AddAgentTest#authorizeAgentTest"
+#########################################
+echo "Run system tests"
+
+mvn test -DsuiteXmlFile=teamcity-suites/api-suite.xml
+mvn test -DsuiteXmlFile=teamcity-suites/ui-suite.xml

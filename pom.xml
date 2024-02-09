@@ -20,6 +20,7 @@
         <jackson.version>2.15.2</jackson.version>
         <gson.version>2.10.1</gson.version>
         <selenide.version>7.0.2</selenide.version>
+        <suiteXmlFile>teamcity-suites/api-suite.xml</suiteXmlFile>
     </properties>
 
     <dependencies>
@@ -95,6 +96,9 @@
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                     </argLine>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
+                    </suiteXmlFiles>
                     <systemProperties>
                         <property>
                             <name>allure.results.directory</name>
