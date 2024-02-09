@@ -12,12 +12,12 @@ public class UncheckedRequests {
     private UserUnchecked userRequest;
     private ProjectUnchecked projectRequest;
     private UncheckedBuildConfig buildConfigRequest;
-    private AgentsUnchecked agentsUnchecked;
+    private AgentsUnchecked agentsRequest;
 
     public UncheckedRequests(RequestSpecification spec) {
         this.userRequest = new UserUnchecked(spec);
         this.projectRequest = new ProjectUnchecked(spec);
         this.buildConfigRequest = new UncheckedBuildConfig(spec);
-        this.agentsUnchecked = new AgentsUnchecked(spec);
+        this.agentsRequest = new AgentsUnchecked(spec);
     }
 }
