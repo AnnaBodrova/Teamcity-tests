@@ -7,10 +7,13 @@ import com.example.teamcity.api.requests.checked.ProjectChecked;
 import com.example.teamcity.api.requests.unchecked.ProjectUnchecked;
 import com.example.teamcity.api.requests.unchecked.UncheckedBuildConfig;
 import com.example.teamcity.api.spec.Specifications;
+import com.example.teamcity.ui.elements.ProjectElement;
 import com.example.teamcity.ui.pages.ProjectsPage;
 import com.example.teamcity.ui.pages.admin.CreateNewProject;
 import org.apache.http.HttpStatus;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 
 public class CreateNewProjectTest extends BaseUITest {
@@ -25,10 +28,17 @@ public class CreateNewProjectTest extends BaseUITest {
                 .createProjectByUrl(url)
                 .setupProject(testData.getNewProjectDescription().getName(), testData.getBuildType().getName());
 
-        new ProjectsPage().open()
-                .getSubprojects()
-                .stream().reduce((first, second) -> second).get()
-                .getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
+//        new ProjectsPage().open()
+//                .getSubprojects()
+//                .stream().reduce((first, second) -> second).get()
+//                .getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
+
+        List<ProjectElement> list = new ProjectsPage().open()
+                .getSubprojects();
+
+
+        list.get(list.size()-1).getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
+
 
         var project = new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser()))
                 .get(testData.getNewProjectDescription().getName());
