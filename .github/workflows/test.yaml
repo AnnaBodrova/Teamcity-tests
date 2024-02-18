@@ -72,6 +72,9 @@ jobs:
       - name: Run api tests
         run: ./mvnw test -DsuiteXmlFile=teamcity-suites/api-suite.xml
 
+      - name: Show folders
+        run: ls
+        
       - name: Load test report history
         uses: actions/checkout@v3
         if: always()
