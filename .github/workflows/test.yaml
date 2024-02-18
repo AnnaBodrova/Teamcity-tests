@@ -86,7 +86,7 @@ jobs:
         with:
           gh_pages: gh-pages
           allure_history: allure-history
-          allure_results: allure-results
+          allure_results: target/allure-results
       - name: Set up superUserToken environment variable
         run: echo ${{ secrets.GITHUB_TOKEN }}
 
