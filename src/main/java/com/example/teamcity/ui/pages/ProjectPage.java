@@ -23,6 +23,7 @@ public class ProjectPage extends Page {
     }
 
     public ProjectPage runBuild() {
+        runBuildButton.shouldBe(Condition.interactable, Duration.ofSeconds(10));
         runBuildButton.click();
         return this;
     }

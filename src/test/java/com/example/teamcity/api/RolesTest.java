@@ -25,7 +25,7 @@ public class RolesTest extends BaseApiTest {
         uncheckedWithSuperUser.getProjectRequest()
                 .get(testData.getNewProjectDescription().getId())
                 .then().assertThat().statusCode(HttpStatus.SC_NOT_FOUND)
-                .body(Matchers.containsString("No project found by locator 'count:1,id:" + testData.getNewProjectDescription().getId()));
+                .body(Matchers.containsString("Nothing is found by locator 'count:1,name:" + testData.getNewProjectDescription().getId()));
     }
 
     @Test

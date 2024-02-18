@@ -1,5 +1,6 @@
 package com.example.teamcity.api.requests;
 
+import com.example.teamcity.api.requests.unchecked.AgentsUnchecked;
 import com.example.teamcity.api.requests.unchecked.ProjectUnchecked;
 import com.example.teamcity.api.requests.unchecked.UncheckedBuildConfig;
 import com.example.teamcity.api.requests.unchecked.UserUnchecked;
@@ -11,11 +12,12 @@ public class UncheckedRequests {
     private UserUnchecked userRequest;
     private ProjectUnchecked projectRequest;
     private UncheckedBuildConfig buildConfigRequest;
+    private AgentsUnchecked agentsRequest;
 
     public UncheckedRequests(RequestSpecification spec) {
         this.userRequest = new UserUnchecked(spec);
         this.projectRequest = new ProjectUnchecked(spec);
         this.buildConfigRequest = new UncheckedBuildConfig(spec);
-
+        this.agentsRequest = new AgentsUnchecked(spec);
     }
 }
