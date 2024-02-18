@@ -87,6 +87,8 @@ jobs:
           gh_pages: gh-pages
           allure_history: allure-history
           allure_results: build/allure-results
+      - name: Set up superUserToken environment variable
+        run: echo ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
