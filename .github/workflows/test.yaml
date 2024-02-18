@@ -72,6 +72,15 @@ jobs:
       - name: Run api tests
         run: ./mvnw test -DsuiteXmlFile=teamcity-suites/api-suite.xml
 
+      - name: Show folders
+        run: ls
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+         name: surefire-reports
+         path: target 
+         
       - name: Load test report history
         uses: actions/checkout@v3
         if: always()
@@ -86,15 +95,19 @@ jobs:
         with:
           gh_pages: gh-pages
           allure_history: allure-history
-          allure_results: build/allure-results
+          allure_results: target/allure-results
+      - name: Set up superUserToken environment variable
+        run: echo ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          deploy_key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           publish_branch: gh-pages
           publish_dir: allure-history
+
+
 
 
 
