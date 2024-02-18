@@ -93,6 +93,12 @@ jobs:
       - name: Set up superUserToken environment variable
         run: echo ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1
+        with:
+         name: surefire-reports
+         path: target/surefire-reports
+
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
@@ -101,11 +107,7 @@ jobs:
           publish_branch: gh-pages
           publish_dir: allure-history
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v1
-        with:
-         name: surefire-reports
-         path: target/surefire-reports/**
+
 
 
 
