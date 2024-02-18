@@ -1,10 +1,13 @@
 package com.example.teamcity.ui.pages.admin;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.example.teamcity.ui.Selectors;
 import com.example.teamcity.ui.pages.Page;
 import lombok.Getter;
+
+import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.element;
 @Getter
@@ -28,6 +31,7 @@ public class CreateNewProject extends Page {
     }
 
     public void setupProject(String projectName, String builTypeName){
+        projectNameInput.shouldBe(Condition.visible, Duration.ofSeconds(10));
         projectNameInput.clear();
         projectNameInput.sendKeys(projectName);
 
