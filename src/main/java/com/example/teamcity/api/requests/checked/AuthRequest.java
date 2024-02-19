@@ -2,6 +2,7 @@ package com.example.teamcity.api.requests.checked;
 
 import com.example.teamcity.api.models.User;
 import com.example.teamcity.api.spec.Specifications;
+import com.github.viclovsky.swagger.coverage.SwaggerCoverageV3RestAssured;
 import io.restassured.RestAssured;
 import org.apache.http.HttpStatus;
 
@@ -16,6 +17,7 @@ public class AuthRequest {
     public String getCSRFToken(){
         return RestAssured
                 .given()
+                .filter(new SwaggerCoverageV3RestAssured())
                 .spec(Specifications.getSpec().authSpec(user))
                 .get("http://admin:admin@192.168.0.104:8111/authenticationTest.html?csrf")
                 .then().assertThat().statusCode(HttpStatus.SC_OK)
