@@ -8,7 +8,6 @@ import org.assertj.core.api.SoftAssertions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-import static com.example.teamcity.api.SwaggerSetUp.setupSwagger;
 
 public class BaseTest {
     protected SoftAssertions soft;
@@ -21,7 +20,6 @@ public class BaseTest {
 
     @BeforeMethod
     public void beforeTest() {
-        setupSwagger();
         soft = new SoftAssertions();
         testDataStorage = TestDataStorage.getTestDataStorage();
     }

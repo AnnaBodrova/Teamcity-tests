@@ -15,7 +15,10 @@ private static final String BUILD_CONFIG_ENPOINT = "/app/rest/buildTypes";
 
     @Override
     public Response create(Object o) {
-        return given().spec(spec).body(o).post(BUILD_CONFIG_ENPOINT);
+        return given()
+                .spec(spec)
+                .body(o)
+                .post(BUILD_CONFIG_ENPOINT);
     }
 
     @Override
@@ -32,6 +35,8 @@ private static final String BUILD_CONFIG_ENPOINT = "/app/rest/buildTypes";
 
     @Override
     public Response delete(String id) {
-        return given().spec(spec).delete(BUILD_CONFIG_ENPOINT+"/id:"+id);
+        return given()
+                .spec(spec)
+                .delete(BUILD_CONFIG_ENPOINT+"/id:"+id);
     }
 }

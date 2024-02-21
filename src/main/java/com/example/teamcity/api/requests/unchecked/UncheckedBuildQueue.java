@@ -17,7 +17,10 @@ public class UncheckedBuildQueue extends Request implements CrudInterface {
 
     @Override
     public Response create(Object o) {
-        return given().spec(spec).body(o).post(BUILD_QUEUE_ENDPOINT);
+        return given()
+                .spec(spec)
+                .body(o)
+                .post(BUILD_QUEUE_ENDPOINT);
     }
 
     @Override
