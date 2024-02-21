@@ -2,6 +2,7 @@ package com.example.teamcity.ui;
 
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 import com.example.teamcity.api.requests.checked.CheckedBuildConfig;
 import com.example.teamcity.api.requests.checked.ProjectChecked;
 import com.example.teamcity.api.requests.unchecked.ProjectUnchecked;
@@ -11,6 +12,7 @@ import com.example.teamcity.ui.elements.ProjectElement;
 import com.example.teamcity.ui.pages.ProjectsPage;
 import com.example.teamcity.ui.pages.admin.CreateNewProject;
 import org.apache.http.HttpStatus;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -32,12 +34,19 @@ public class CreateNewProjectTest extends BaseUITest {
 //                .getSubprojects()
 //                .stream().reduce((first, second) -> second).get()
 //                .getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
-
-        List<ProjectElement> list = new ProjectsPage().open()
-                .getSubprojects();
-
-
-        list.get(list.size()-1).getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
+        for (int attempt = 0; attempt < 3; attempt++) {
+            try {
+                List<ProjectElement> list = new ProjectsPage().open()
+                        .getSubprojects();
+                list.get(list.size() - 1).getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
+                break;
+            } catch (StaleElementReferenceException e) {
+                Selenide.refresh();
+                List<ProjectElement> list = new ProjectsPage().open()
+                        .getSubprojects();
+                list.get(list.size() - 1).getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
+            }
+        }
 
 
         var project = new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser()))
