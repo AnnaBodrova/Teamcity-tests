@@ -17,6 +17,8 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static com.codeborne.selenide.Selenide.$$;
+
 
 public class CreateNewProjectTest extends BaseUITest {
     private String url = "https://github.com/AlexPshe/spring-core-for-qa";
@@ -34,17 +36,8 @@ public class CreateNewProjectTest extends BaseUITest {
 //                .getSubprojects()
 //                .stream().reduce((first, second) -> second).get()
 //                .getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
-        for (int attempt = 0; attempt < 3; attempt++) {
-            try {
-                List<ProjectElement> list = new ProjectsPage().open()
-                        .getSubprojects();
-                list.get(list.size() - 1).getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
-                break;
-            } catch (StaleElementReferenceException e) {
-                Selenide.refresh();
-            }
-        }
-
+        new ProjectsPage().open();
+        $$(".Subproject__container--WE").get(0).shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
 
         var project = new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser()))
                 .get(testData.getNewProjectDescription().getName());
