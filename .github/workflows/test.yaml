@@ -67,7 +67,7 @@ jobs:
         run: ./mvnw clean test -Dtest="AddAgentTest#authorizeAgentTest"
 
       - name: Run ui tests
-        run: ./mvnw test -DsuiteXmlFile=teamcity-suites/ui-suite.xml
+        run: ./mvnw clean test -DsuiteXmlFile=teamcity-suites/ui-suite.xml
 
       - name: Run api tests
         run: ./mvnw test -DsuiteXmlFile=teamcity-suites/api-suite.xml
@@ -111,7 +111,6 @@ jobs:
         if: always()
         run: ./swagger-coverage-commandline-1.5.0/bin/swagger-coverage-commandline -s http://$HOST:8111/app/rest/swagger.json -i target/swagger-coverage
 
-      # Swagger coverage репорт сохраняется в артефакты GitHub Actions прогона
       - name: Save Swagger coverage
         uses: actions/upload-artifact@v4
         if: always()
