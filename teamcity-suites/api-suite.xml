@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="API Suite">
-    <test name="API Test">
+<suite name="Teamcity Suite">
+    <test name="API Tests">
         <classes>
             <class name="com.example.teamcity.api.BuildConfigurationTest"/>
             <class name="com.example.teamcity.api.BuildQueueTest"/>
