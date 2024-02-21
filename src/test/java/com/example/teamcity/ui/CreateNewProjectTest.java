@@ -13,6 +13,7 @@ import com.example.teamcity.ui.pages.ProjectsPage;
 import com.example.teamcity.ui.pages.admin.CreateNewProject;
 import org.apache.http.HttpStatus;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.support.ui.Sleeper;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -37,8 +38,14 @@ public class CreateNewProjectTest extends BaseUITest {
 //                .stream().reduce((first, second) -> second).get()
 //                .getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
         new ProjectsPage().open();
-        $$(".Subproject__container--Px").get(0).shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
-
+        for (int i = 0; i< 3; i++ ) {
+            try {
+                $$(".Subproject__container--Px").get(0).shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
+                break;
+            } catch (StaleElementReferenceException e) {
+                Selenide.refresh();
+            }
+        }
         var project = new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser()))
                 .get(testData.getNewProjectDescription().getName());
         soft.assertThat(project.getId()).isNotEmpty();
