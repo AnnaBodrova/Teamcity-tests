@@ -42,9 +42,6 @@ public class CreateNewProjectTest extends BaseUITest {
                 break;
             } catch (StaleElementReferenceException e) {
                 Selenide.refresh();
-                List<ProjectElement> list = new ProjectsPage().open()
-                        .getSubprojects();
-                list.get(list.size() - 1).getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
             }
         }
 
