@@ -37,7 +37,7 @@ public class CreateNewProjectTest extends BaseUITest {
 //                .stream().reduce((first, second) -> second).get()
 //                .getHeader().shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
         new ProjectsPage().open();
-        $$(".Subproject__container--WE").get(0).shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
+        $$(".Subproject__container--Px").get(0).shouldHave(Condition.text(testData.getNewProjectDescription().getName()));
 
         var project = new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser()))
                 .get(testData.getNewProjectDescription().getName());
