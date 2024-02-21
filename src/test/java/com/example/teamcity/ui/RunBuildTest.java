@@ -5,11 +5,9 @@ import com.codeborne.selenide.Selenide;
 import com.example.teamcity.ui.pages.ProjectPage;
 import com.example.teamcity.ui.pages.ProjectsPage;
 import com.example.teamcity.ui.pages.admin.CreateNewProject;
-import io.qameta.allure.Step;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.testng.annotations.Test;
 
-import static com.codeborne.selenide.Selenide.$$;
 import static io.qameta.allure.Allure.step;
 
 public class RunBuildTest extends BaseUITest {
@@ -37,12 +35,12 @@ public class RunBuildTest extends BaseUITest {
             }
         });
 
-
-
-        new ProjectPage()
-                .runBuild()
-                .waitRunBlockShown()
-                .getStatusDescription().shouldHave(Condition.text("Build #1 is Running"));
+        step("Run build", ()->{
+            new ProjectPage()
+                    .runBuild()
+                    .waitRunBlockShown()
+                    .getStatusDescription().shouldHave(Condition.text("Build #1 is Running"));
+        });
     }
 }
 
