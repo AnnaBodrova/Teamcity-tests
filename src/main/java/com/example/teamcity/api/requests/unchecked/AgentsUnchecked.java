@@ -1,6 +1,7 @@
 package com.example.teamcity.api.requests.unchecked;
 
 import com.example.teamcity.api.requests.Request;
+import com.github.viclovsky.swagger.coverage.SwaggerCoverageV3RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 

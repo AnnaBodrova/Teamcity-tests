@@ -21,6 +21,9 @@
         <gson.version>2.10.1</gson.version>
         <selenide.version>7.0.2</selenide.version>
         <suiteXmlFile>teamcity-suites/api-suite.xml</suiteXmlFile>
+        <latest-swagger-coverage-version>1.5.0</latest-swagger-coverage-version>
+        <jackson-annotations.version>2.16.1</jackson-annotations.version>
+        <allure-rest-assured.version>2.25.0</allure-rest-assured.version>
     </properties>
 
     <dependencies>
@@ -70,6 +73,11 @@
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson-annotations.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
@@ -80,9 +88,19 @@
             <version>3.24.2</version>
         </dependency>
         <dependency>
+            <groupId>com.github.viclovsky</groupId>
+            <artifactId>swagger-coverage-rest-assured</artifactId>
+            <version>${latest-swagger-coverage-version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.codeborne</groupId>
             <artifactId>selenide</artifactId>
             <version>${selenide.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-rest-assured</artifactId>
+            <version>${allure-rest-assured.version}</version>
         </dependency>
     </dependencies>
     <build>

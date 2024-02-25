@@ -13,41 +13,61 @@ import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
 
+import static io.qameta.allure.Allure.step;
+
 
 public class RolesTest extends BaseApiTest {
     @Test
     public void unauthorizedUserCannotCreateProject() {
         var testData = testDataStorage.addTestData();
-        new UncheckedRequests(Specifications.getSpec().unauthSpec()).getProjectRequest()
-                .create(testData.getNewProjectDescription())
-                .then().assertThat().statusCode(HttpStatus.SC_UNAUTHORIZED)
-                .body(Matchers.containsString("Authentication required"));
-        uncheckedWithSuperUser.getProjectRequest()
-                .get(testData.getNewProjectDescription().getId())
-                .then().assertThat().statusCode(HttpStatus.SC_NOT_FOUND)
-                .body(Matchers.containsString("Nothing is found by locator 'count:1,name:" + testData.getNewProjectDescription().getId()));
+
+        step("Try to create project without auth and check error message and status", ()-> {
+            new UncheckedRequests(Specifications.getSpec().unauthSpec()).getProjectRequest()
+                    .create(testData.getNewProjectDescription())
+                    .then().assertThat().statusCode(HttpStatus.SC_UNAUTHORIZED)
+                    .body(Matchers.containsString("Authentication required"));
+        });
+
+        step("Check by superuser that previos project was not really created", ()-> {
+            uncheckedWithSuperUser.getProjectRequest()
+                    .get(testData.getNewProjectDescription().getId())
+                    .then().assertThat().statusCode(HttpStatus.SC_NOT_FOUND)
+                    .body(Matchers.containsString("Nothing is found by locator 'count:1,name:" + testData.getNewProjectDescription().getId()));
+        });
     }
 
     @Test
     public void systemAdminUserCanCreateProject() {
         var testData = testDataStorage.addTestData();
-        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.SYSTEM_ADMIN, "g"));
-        checkedWithSuperUser.getUserRequest().create(testData.getUser());
 
-        var project = new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
-        soft.assertThat(project.getId()).isEqualTo(testData.getNewProjectDescription().getId());
+        step("Create system admin user", ()-> {
+            testData.getUser().setRoles(TestDataGenerator.generateRole(Role.SYSTEM_ADMIN, "g"));
+            checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        });
+
+        step("Create project by system admin user", ()-> {
+            var project = new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
+            soft.assertThat(project.getId()).isEqualTo(testData.getNewProjectDescription().getId());
+        });
     }
 
     @Test
-    public void projectAdminUserShouldHaveRightsToCreateBuildConfigToHisProject() {
+    public void projectAdminUserShouldHaveRightsToCreateBuildConfigToProject() {
         var testData = testDataStorage.addTestData();
-        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + testData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
-        checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        step("Create project", ()-> {
+            checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        });
 
-        var buildConfig = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
-                .create(testData.getBuildType());
-        soft.assertThat(buildConfig.getId()).isEqualTo(testData.getBuildType().getId());
+        step("Create project admin user", ()-> {
+            testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + testData.getNewProjectDescription().getId()));
+            checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        });
+
+        step("Create build config by project admin user. Check it's created ", ()-> {
+            var buildConfig = new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                    .create(testData.getBuildType());
+            soft.assertThat(buildConfig.getId()).isEqualTo(testData.getBuildType().getId());
+        });
     }
 
     @Test
@@ -55,147 +75,184 @@ public class RolesTest extends BaseApiTest {
         var firstTestData = testDataStorage.addTestData();
         var secondTestData = testDataStorage.addTestData();
 
-        new CheckedRequests(Specifications.getSpec().authSpec(firstTestData.getUser()));
-        new CheckedRequests(Specifications.getSpec().authSpec(secondTestData.getUser()));
+        step("Create 2 projects", ()-> {
+            checkedWithSuperUser.getProjectRequest().create(firstTestData.getNewProjectDescription());
+            checkedWithSuperUser.getProjectRequest().create(secondTestData.getNewProjectDescription());
+        });
 
-        checkedWithSuperUser.getProjectRequest().create(firstTestData.getNewProjectDescription());
-        checkedWithSuperUser.getProjectRequest().create(secondTestData.getNewProjectDescription());
+        step("Create first project admin user that has rights to first project", ()-> {
+            firstTestData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + firstTestData.getNewProjectDescription().getId()));
+            checkedWithSuperUser.getUserRequest().create(firstTestData.getUser());
+        });
 
-        firstTestData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + firstTestData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getUserRequest().create(firstTestData.getUser());
+        step("Create second project admin user that has rights to second project", ()-> {
+            secondTestData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + secondTestData.getNewProjectDescription().getId()));
+            checkedWithSuperUser.getUserRequest().create(secondTestData.getUser());
+        });
 
-        secondTestData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + secondTestData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getUserRequest().create(secondTestData.getUser());
-
-        new UncheckedBuildConfig(Specifications.getSpec().authSpec(secondTestData.getUser()))
-                .create(firstTestData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_OK);
+        step("Second user creates build config to first project ", ()-> {
+            new UncheckedBuildConfig(Specifications.getSpec().authSpec(secondTestData.getUser()))
+                    .create(firstTestData.getBuildType())
+                    .then().assertThat().statusCode(HttpStatus.SC_OK);
+        });
     }
 
     @Test
     public void projectAdminCanRunBuild() {
         var testData = testDataStorage.addTestData();
 
-        new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
+        step("Create project", ()-> {
+            checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        });
 
-        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        step("Create project admin user", ()-> {
+            testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + testData.getNewProjectDescription().getId()));
+            checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        });
 
-        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_ADMIN, "p:" + testData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        step("Create build config by super user", ()-> {
+            checkedWithSuperUser.getBuildConfigRequest()
+                    .create(testData.getBuildType());
+        });
 
-        checkedWithSuperUser.getBuildConfigRequest()
-                .create(testData.getBuildType());
-
-        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
-                .then()
-                .assertThat().statusCode(HttpStatus.SC_OK);
+        step("Run build by project admin user and check", ()-> {
+            new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                    .then()
+                    .assertThat().statusCode(HttpStatus.SC_OK);
+        });
     }
 
     @Test
     public void projectDeveloperUserCannotCreateBuildConfiguration() {
-        var firstTestData = testDataStorage.addTestData();
+        var testData = testDataStorage.addTestData();
 
-        new CheckedRequests(Specifications.getSpec().authSpec(firstTestData.getUser()));
+        step("Create project", ()-> {
+            checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        });
 
-        checkedWithSuperUser.getProjectRequest().create(firstTestData.getNewProjectDescription());
+        step("Create project developer user", ()-> {
+            testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_DEVELOPER, "p:" + testData.getNewProjectDescription().getId()));
+            checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        });
 
-        firstTestData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_DEVELOPER, "p:" + firstTestData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getUserRequest().create(firstTestData.getUser());
-
-        new UncheckedBuildConfig(Specifications.getSpec().authSpec(firstTestData.getUser()))
-                .create(firstTestData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN);
+        step("Try to create build config by project developer user. Check it's not created", ()-> {
+            new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                    .create(testData.getBuildType())
+                    .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN);
+        });
     }
 
     @Test
     public void projectDeveloperUserCanRunBuild() {
         var testData = testDataStorage.addTestData();
 
-        new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
+        step("Create project", ()-> {
+            checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        });
 
-        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        step("Create project developer user", ()-> {
+            testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_DEVELOPER, "p:" + testData.getNewProjectDescription().getId()));
+            checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        });
 
-        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_DEVELOPER, "p:" + testData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        step("Create build config by super user", ()-> {
+            checkedWithSuperUser.getBuildConfigRequest()
+                    .create(testData.getBuildType());
+        });
 
-        checkedWithSuperUser.getBuildConfigRequest()
-                .create(testData.getBuildType());
-
-        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
-                .then()
-                .assertThat().statusCode(HttpStatus.SC_OK);
+        step("Run build by project developer user and check", ()-> {
+            new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                    .then()
+                    .assertThat().statusCode(HttpStatus.SC_OK);
+        });
     }
 
     @Test
     public void projectViwerUserCannotCreateBuildConfiguration() {
-        var firstTestData = testDataStorage.addTestData();
+        var testData = testDataStorage.addTestData();
 
-        new CheckedRequests(Specifications.getSpec().authSpec(firstTestData.getUser()));
+        step("Create project", ()-> {
+            checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        });
 
-        checkedWithSuperUser.getProjectRequest().create(firstTestData.getNewProjectDescription());
+        step("Create project viewer user", ()-> {
+            testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_VIEWER, "p:" + testData.getNewProjectDescription().getId()));
+            checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        });
 
-        firstTestData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_VIEWER, "p:" + firstTestData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getUserRequest().create(firstTestData.getUser());
-
-        new UncheckedBuildConfig(Specifications.getSpec().authSpec(firstTestData.getUser()))
-                .create(firstTestData.getBuildType())
-                .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN);
+        step("Try to create build config by project viewer user. Check it's not created", ()-> {
+            new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                    .create(testData.getBuildType())
+                    .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN);
+        });
     }
 
     @Test
     public void projectViwerUserCanRunBuild() {
         var testData = testDataStorage.addTestData();
 
-        new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
+        step("Create project", ()-> {
+            checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        });
 
-        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        step("Create project viewer user", ()-> {
+            testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_VIEWER, "p:" + testData.getNewProjectDescription().getId()));
+            checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        });
 
-        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.PROJECT_VIEWER, "p:" + testData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        step("Create build config by super user", ()-> {
+            checkedWithSuperUser.getBuildConfigRequest()
+                    .create(testData.getBuildType());
+        });
 
-        checkedWithSuperUser.getBuildConfigRequest()
-                .create(testData.getBuildType());
-
-        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
-                .then()
-                .assertThat().statusCode(HttpStatus.SC_OK);
+        step("Run build by project viewer user and check", ()-> {
+            new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                    .then()
+                    .assertThat().statusCode(HttpStatus.SC_OK);
+        });
     }
 
     @Test
     public void agentManagerUserCanCreateBuildConfiguration() {
         var testData = testDataStorage.addTestData();
 
-        new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
+        step("Create project", ()-> {
+            checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        });
 
-        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        step("Create agent manager user", ()-> {
+            testData.getUser().setRoles(TestDataGenerator.generateRole(Role.AGENT_MANAGER, "p:" + testData.getNewProjectDescription().getId()));
+            checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        });
 
-        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.AGENT_MANAGER, "p:" + testData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getUserRequest().create(testData.getUser());
-
-        new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
-                .create(testData.getBuildType());
-
-        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
-                .then()
-                .assertThat().statusCode(HttpStatus.SC_OK);
+        step("Create build config by agent manager", ()-> {
+            new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                    .create(testData.getBuildType());
+        });
     }
 
     @Test
     public void agentManagerUserCanRunBuild() {
         var testData = testDataStorage.addTestData();
 
-        new CheckedRequests(Specifications.getSpec().authSpec(testData.getUser()));
+        step("Create project", ()-> {
+            checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        });
 
-        checkedWithSuperUser.getProjectRequest().create(testData.getNewProjectDescription());
+        step("Create agent manager user", ()-> {
+            testData.getUser().setRoles(TestDataGenerator.generateRole(Role.AGENT_MANAGER, "p:" + testData.getNewProjectDescription().getId()));
+            checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        });
 
-        testData.getUser().setRoles(TestDataGenerator.generateRole(Role.AGENT_MANAGER, "p:" + testData.getNewProjectDescription().getId()));
-        checkedWithSuperUser.getUserRequest().create(testData.getUser());
+        step("Create build config by agent manager", ()-> {
+            new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
+                    .create(testData.getBuildType());
+        });
 
-        new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
-                .create(testData.getBuildType());
-
-        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
-                .then()
-                .assertThat().statusCode(HttpStatus.SC_OK);
+        step("Run build by agent manager ", ()-> {
+            new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                    .then()
+                    .assertThat().statusCode(HttpStatus.SC_OK);
+        });
     }
 }

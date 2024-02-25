@@ -67,10 +67,60 @@ jobs:
         run: ./mvnw clean test -Dtest="AddAgentTest#authorizeAgentTest"
 
       - name: Run ui tests
-        run: ./mvnw test -DsuiteXmlFile=teamcity-suites/ui-suite.xml
+        run: ./mvnw clean test -DsuiteXmlFile=teamcity-suites/ui-suite.xml
 
       - name: Run api tests
         run: ./mvnw test -DsuiteXmlFile=teamcity-suites/api-suite.xml
+
+      - name: Show folders
+        run: ls
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+         name: surefire-reports
+         path: target 
+         
+      - name: Load test report history
+        uses: actions/checkout@v3
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Build test report
+        uses: simple-elf/allure-report-action@v1.7
+        if: always()
+        with:
+          gh_pages: gh-pages
+          allure_history: allure-history
+          allure_results: target/allure-results
+      - name: Set up superUserToken environment variable
+        run: echo ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish test report
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          deploy_key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+
+      - name: Run Swagger coverage
+        if: always()
+        run: ./swagger-coverage-commandline-1.5.0/bin/swagger-coverage-commandline -s http://$HOST:8111/app/rest/swagger.json -i target/swagger-coverage
+
+      - name: Save Swagger coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swagger-coverage
+          path: |
+            swagger-coverage-report.html
+            swagger-coverage-results.json
+
+
 
 
 

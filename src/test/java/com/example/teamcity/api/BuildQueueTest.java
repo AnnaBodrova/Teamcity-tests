@@ -9,59 +9,87 @@ import com.example.teamcity.api.spec.Specifications;
 import org.apache.http.HttpStatus;
 import org.testng.annotations.Test;
 
+import static io.qameta.allure.Allure.step;
+
 public class BuildQueueTest extends BaseApiTest {
 
     @Test
     public void buildCanBeAddedIntoQueue() {
         var testData = testDataStorage.addTestData();
-        new UserChecked(Specifications.getSpec().superUserSpec()).create(testData.getUser());
-        new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
 
-        new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuildType());
+        step("Create user for future steps", ()-> {
+            new UserChecked(Specifications.getSpec().superUserSpec()).create(testData.getUser());
+        });
 
-        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
-                .then()
-                .assertThat().statusCode(HttpStatus.SC_OK);
+        step("Create project and build configuration", ()-> {
+            new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
+            new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuildType());
+        });
+
+        step("Add build to the queue and check it's added successfully", ()-> {
+            new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                    .then()
+                    .assertThat().statusCode(HttpStatus.SC_OK);
+        });
     }
 
     @Test
     public void buildWithNullIdCannotBeCreated() {
         var testData = testDataStorage.addTestData();
-        testData.getBuild().getBuildType().setId(null);
-        new UserChecked(Specifications.getSpec().superUserSpec()).create(testData.getUser());
-        new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
+        step("Create user for future steps", ()-> {
+            new UserChecked(Specifications.getSpec().superUserSpec()).create(testData.getUser());
+        });
 
-        new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuildType());
+        step("Create project and build config", ()-> {
+            new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
+            new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuildType());
+        });
 
-        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
-                .then()
-                .assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
+        step("Create build with null id and check it's not created", ()-> {
+            testData.getBuild().getBuildType().setId(null);
+            new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                    .then()
+                    .assertThat().statusCode(HttpStatus.SC_BAD_REQUEST);
+        });
     }
 
     @Test
     public void buildEmptyStringIdCannotBeCreated() {
         var testData = testDataStorage.addTestData();
-        testData.getBuild().getBuildType().setId("");
-        new UserChecked(Specifications.getSpec().superUserSpec()).create(testData.getUser());
-        new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
+        step("Create user for future steps", ()-> {
+            new UserChecked(Specifications.getSpec().superUserSpec()).create(testData.getUser());
+        });
 
-        new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuildType());
+        step("Create project and build config", ()-> {
+            new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
+            new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuildType());
+        });
 
-        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
-                .then()
-                .assertThat().statusCode(HttpStatus.SC_NOT_FOUND);
+        step("Create build with null id and check it's not created", ()-> {
+            testData.getBuild().getBuildType().setId("");
+            new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                    .then()
+                    .assertThat().statusCode(HttpStatus.SC_NOT_FOUND);
+        });
     }
 
     @Test
     public void buildWithUnknownIdCannotBeAddedIntoQueue() {
         var testData = testDataStorage.addTestData();
-        new UserChecked(Specifications.getSpec().superUserSpec()).create(testData.getUser());
-        new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
-        testData.getBuild().getBuildType().setId(RandomData.getString());
-        new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuildType());
+        step("Create user for future steps", ()-> {
+            new UserChecked(Specifications.getSpec().superUserSpec()).create(testData.getUser());
+        });
 
-        new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
-                .then()
-                .assertThat().statusCode(HttpStatus.SC_NOT_FOUND);
+        step("Create project and build config", ()-> {
+            new ProjectChecked(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getNewProjectDescription());
+            new CheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuildType());
+        });
+
+        step("Create build with non-existing id and check it's not created", ()-> {
+            testData.getBuild().getBuildType().setId(RandomData.getString());
+            new UncheckedBuildQueue(Specifications.getSpec().authSpec(testData.getUser())).create(testData.getBuild())
+                    .then()
+                    .assertThat().statusCode(HttpStatus.SC_NOT_FOUND);
+        });
     }
 }
